@@ -96,6 +96,7 @@ if index(g:bundle_group, 'basic') >= 0
 
 	" 一次性安装一大堆 colorscheme
 	Plug 'flazz/vim-colorschemes'
+	Plug 'ghifarit53/tokyonight-vim'
 
 	" 支持库，给其他插件用的函数库
 	Plug 'xolox/vim-misc'
@@ -293,7 +294,7 @@ if index(g:bundle_group, 'airline') >= 0
 	let g:airline_powerline_fonts = 0
 	let g:airline_exclude_preview = 1
 	let g:airline_section_b = '%n'
-	let g:airline_theme='deus'
+	let g:airline_theme='tokyonight'
 	let g:airline#extensions#branch#enabled = 0
 	let g:airline#extensions#syntastic#enabled = 0
 	let g:airline#extensions#fugitiveline#enabled = 0
