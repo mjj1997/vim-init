@@ -54,8 +54,8 @@ set t_Co=256
 
 set termguicolors
 
+" 设置颜色主题为 tokyonight
 let g:tokyonight_disable_italic_comment = 1
-
 colorscheme tokyonight
 
 
