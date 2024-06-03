@@ -184,6 +184,11 @@ endif
 "----------------------------------------------------------------------
 if index(g:bundle_group, 'tags') >= 0
 
+	" C/C++/Java 等 6 种原生支持的代码直接使用 gtags 本地分析器
+	" 其它语言使用 python-pygments 模块
+	let $GTAGSLABEL = 'native-pygments'
+	let $GTAGSCONF = resolve(expand('~/.globalrc'))
+
 	" 提供 ctags/gtags 后台数据库自动更新功能
 	Plug 'skywind3000/vim-gutentags'
 
