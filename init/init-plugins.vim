@@ -394,7 +394,7 @@ if index(g:bundle_group, 'ale') >= 0
 	let g:ale_python_pylint_options = '--rcfile='.s:lintcfg('pylint.conf')
 	let g:ale_python_pylint_options .= ' --disable=W'
 	let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
-	let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
+	let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++17'
 	let g:ale_c_cppcheck_options = ''
 	let g:ale_cpp_cppcheck_options = ''
 
@@ -405,6 +405,17 @@ if index(g:bundle_group, 'ale') >= 0
 		let g:ale_linters.c += ['clang']
 		let g:ale_linters.cpp += ['clang']
 	endif
+
+	" 配置 Ale 使用 clang-format 作为 C++ 代码的格式化工具
+	let g:ale_fixers = {
+				\ 'cpp': ['clang-format'],
+				\ }
+
+	" 配置 clang-format 使用本地的 .local-format 文件
+	let g:ale_cpp_clangformat_use_local_file = 1
+	
+	" 开启自动格式化（在写文件时）
+	let g:ale_fix_on_save = 1
 endif
 
 
