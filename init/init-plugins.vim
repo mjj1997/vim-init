@@ -411,7 +411,7 @@ if index(g:bundle_group, 'ale') >= 0
 				\ 'cpp': ['clang-format'],
 				\ }
 
-	" 配置 clang-format 使用本地的 .local-format 文件
+	" 配置 clang-format 使用本地的 .clang-format 文件
 	let g:ale_cpp_clangformat_use_local_file = 1
 	
 	" 开启自动格式化（在写文件时）
