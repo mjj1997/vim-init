@@ -401,7 +401,12 @@ if index(g:bundle_group, 'ale') >= 0
 	let g:ale_cpp_cc_options = '-Wall -O2 -std=c++17'
 
 	" 设置 clang-tidy 检查的条目
-	let g:ale_cpp_clangtidy_checks = ['-*', 'clang-analyzer-*', 'cppcoreguidelines-*']
+	let g:ale_cpp_clangtidy_checks = [
+				\ '-*',
+				\ 'clang-analyzer-*',
+				\ 'cppcoreguidelines-*',
+				\ '-cppcoreguidelines-avoid-magic-numbers',
+				\ ]
 	
 	" 配置 Ale 使用 clang-format 作为 C++ 代码的格式化工具
 	let g:ale_fixers = {
