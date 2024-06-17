@@ -368,8 +368,8 @@ if index(g:bundle_group, 'ale') >= 0
 
 	" 编辑不同文件类型需要的语法检查器
 	let g:ale_linters = {
-				\ 'c': ['gcc', 'cppcheck'], 
-				\ 'cpp': ['gcc', 'cppcheck'], 
+				\ 'c': ['cc', 'clangtidy'], 
+				\ 'cpp': ['cc', 'clangtidy'], 
 				\ 'python': ['flake8', 'pylint'], 
 				\ 'lua': ['luac'], 
 				\ 'go': ['go build', 'gofmt'],
@@ -393,19 +393,16 @@ if index(g:bundle_group, 'ale') >= 0
 	let g:ale_python_flake8_options = '--conf='.s:lintcfg('flake8.conf')
 	let g:ale_python_pylint_options = '--rcfile='.s:lintcfg('pylint.conf')
 	let g:ale_python_pylint_options .= ' --disable=W'
-	let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
-	let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++17'
-	let g:ale_c_cppcheck_options = ''
-	let g:ale_cpp_cppcheck_options = ''
 
 	let g:ale_linters.text = ['textlint', 'write-good', 'languagetool']
 
-	" 如果没有 gcc 只有 clang 时（FreeBSD）
-	if executable('gcc') == 0 && executable('clang')
-		let g:ale_linters.c += ['clang']
-		let g:ale_linters.cpp += ['clang']
-	endif
+	" 设置 gcc/clang 的参数
+	let g:ale_c_cc_options = '-Wall -O2 -std=c11'
+	let g:ale_cpp_cc_options = '-Wall -O2 -std=c++17'
 
+	" 设置 clang-tidy 检查的条目
+	let g:ale_cpp_clangtidy_checks = ['-*', 'clang-analyzer-*', 'cppcoreguidelines-*']
+	
 	" 配置 Ale 使用 clang-format 作为 C++ 代码的格式化工具
 	let g:ale_fixers = {
 				\ 'cpp': ['clang-format'],
