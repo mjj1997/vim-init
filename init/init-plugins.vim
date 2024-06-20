@@ -14,8 +14,8 @@
 " 默认情况下的分组，可以再前面覆盖之
 "----------------------------------------------------------------------
 if !exists('g:bundle_group')
-	let g:bundle_group = ['basic', 'tags', 'enhanced', 'filetypes', 'textobj']
-	let g:bundle_group += ['tags', 'airline', 'nerdtree', 'ale', 'echodoc']
+	let g:bundle_group = ['basic', 'enhanced', 'filetypes', 'textobj']
+	let g:bundle_group += ['airline', 'nerdtree', 'ale', 'echodoc']
 	let g:bundle_group += ['leaderf']
 	let g:bundle_group += ['coc']
 endif
@@ -175,59 +175,6 @@ if index(g:bundle_group, 'enhanced') >= 0
 	" ALT_+/- 用于按分隔符扩大缩小 v 选区
 	map <m-=> <Plug>(expand_region_expand)
 	map <m--> <Plug>(expand_region_shrink)
-endif
-
-
-"----------------------------------------------------------------------
-" 自动生成 ctags/gtags，并提供自动索引功能
-" 不在 git/svn 内的项目，需要在项目根目录 touch 一个空的 .root 文件
-" 详细用法见：https://zhuanlan.zhihu.com/p/36279445
-"----------------------------------------------------------------------
-if index(g:bundle_group, 'tags') >= 0
-
-	" C/C++/Java 等 6 种原生支持的代码直接使用 gtags 本地分析器
-	" 其它语言使用 python-pygments 模块
-	let $GTAGSLABEL = 'native-pygments'
-	let $GTAGSCONF = resolve(expand('~/.globalrc'))
-
-	" 提供 ctags/gtags 后台数据库自动更新功能
-	Plug 'skywind3000/vim-gutentags'
-
-	" 提供 GscopeFind 命令并自动处理好 gtags 数据库切换
-	" 支持光标移动到符号名上：<leader>cg 查看定义，<leader>cs 查看引用
-	Plug 'skywind3000/gutentags_plus'
-
-	" 设定项目目录标志：除了 .git/.svn 外，还有 .root 文件
-	let g:gutentags_project_root = ['.root']
-	let g:gutentags_ctags_tagfile = '.tags'
-
-	" 默认生成的数据文件集中到 ~/.cache/tags 避免污染项目目录，好清理
-	let g:gutentags_cache_dir = expand('~/.cache/tags')
-
-	" 默认禁用自动生成
-	let g:gutentags_modules = [] 
-
-	" 如果有 ctags 可执行就允许动态生成 ctags 文件
-	if executable('ctags')
-		let g:gutentags_modules += ['ctags']
-	endif
-
-	" 如果有 gtags 可执行就允许动态生成 gtags 数据库
-	if executable('gtags') && executable('gtags-cscope')
-		let g:gutentags_modules += ['gtags_cscope']
-	endif
-
-	" 设置 ctags 的参数
-	let g:gutentags_ctags_extra_args = []
-	let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
-	let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
-	let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
-
-	" 使用 universal-ctags 的话需要下面这行，请反注释
-	" let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
-
-	" 禁止 gutentags 自动链接 gtags 数据库
-	let g:gutentags_auto_add_gtags_cscope = 0
 endif
 
 
@@ -408,17 +355,6 @@ if index(g:bundle_group, 'ale') >= 0
 				\ 'cppcoreguidelines-*',
 				\ '-cppcoreguidelines-avoid-magic-numbers',
 				\ ]
-	
-	" 配置 Ale 使用 clang-format 作为 C++ 代码的格式化工具
-	let g:ale_fixers = {
-				\ 'cpp': ['clang-format'],
-				\ }
-
-	" 配置 clang-format 使用本地的 .clang-format 文件
-	let g:ale_cpp_clangformat_use_local_file = 1
-	
-	" 开启自动格式化（在写文件时）
-	let g:ale_fix_on_save = 1
 endif
 
 
@@ -436,64 +372,62 @@ endif
 " LeaderF：CtrlP / FZF 的超级代替者，文件模糊匹配，tags/函数名 选择
 "----------------------------------------------------------------------
 if index(g:bundle_group, 'leaderf') >= 0
-	" 如果 vim 支持 python 则启用  Leaderf
-	if has('python') || has('python3')
-		Plug 'Yggdroot/LeaderF'
+	Plug 'Yggdroot/LeaderF'
 
-		" CTRL+p 打开文件模糊匹配
-		let g:Lf_ShortcutF = '<c-p>'
+	" CTRL+p 打开文件模糊匹配
+	let g:Lf_ShortcutF = '<c-p>'
 
-		" ALT+n 打开 buffer 模糊匹配
-		let g:Lf_ShortcutB = '<m-n>'
+	" ALT+n 打开 buffer 模糊匹配
+	let g:Lf_ShortcutB = '<m-n>'
 
-		" CTRL+n 打开最近使用的文件 MRU，进行模糊匹配
-		noremap <c-n> :LeaderfMru<cr>
+	" CTRL+n 打开最近使用的文件 MRU，进行模糊匹配
+	noremap <c-n> :LeaderfMru<cr>
 
-		" ALT+p 打开函数列表，按 i 进入模糊匹配，ESC 退出
-		noremap <m-p> :LeaderfFunction!<cr>
+	" ALT+p 打开函数列表，按 i 进入模糊匹配，ESC 退出
+	noremap <m-p> :LeaderfFunction!<cr>
 
-		" ALT+SHIFT+p 打开 tag 列表，i 进入模糊匹配，ESC退出
-		noremap <m-P> :LeaderfBufTag!<cr>
+	" ALT+SHIFT+p 打开 tag 列表，i 进入模糊匹配，ESC退出
+	noremap <m-P> :LeaderfBufTag!<cr>
 
-		" ALT+n 打开 buffer 列表进行模糊匹配
-		noremap <m-n> :LeaderfBuffer<cr>
+	" ALT+n 打开 buffer 列表进行模糊匹配
+	noremap <m-n> :LeaderfBuffer<cr>
 
-		" ALT+m 全局 tags 模糊匹配
-		noremap <m-m> :LeaderfTag<cr>
+	" ALT+m 全局 tags 模糊匹配
+	noremap <m-m> :LeaderfTag<cr>
 
-		" 最大历史文件保存 2048 个
-		let g:Lf_MruMaxFiles = 2048
+	" 最大历史文件保存 2048 个
+	let g:Lf_MruMaxFiles = 2048
 
-		" ui 定制
-		let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
+	" ui 定制
+	let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
 
-		" 如何识别项目目录，从当前文件目录向父目录递归知道碰到下面的文件/目录
-		let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git']
-		let g:Lf_WorkingDirectoryMode = 'Ac'
-		let g:Lf_WindowHeight = 0.30
-		let g:Lf_CacheDirectory = expand('~/.vim/cache')
+	" 如何识别项目目录，从当前文件目录向父目录递归知道碰到下面的文件/目录
+	let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git']
+	let g:Lf_WorkingDirectoryMode = 'Ac'
+	let g:Lf_WindowHeight = 0.30
+	let g:Lf_CacheDirectory = expand('~/.vim/cache')
 
-		" 显示绝对路径
-		let g:Lf_ShowRelativePath = 0
+	" 显示绝对路径
+	let g:Lf_ShowRelativePath = 0
 
-		" 隐藏帮助
-		let g:Lf_HideHelp = 1
+	" 隐藏帮助
+	let g:Lf_HideHelp = 1
 
-		" 模糊匹配忽略扩展名
-		let g:Lf_WildIgnore = {
-					\ 'dir': ['.svn','.git','.hg'],
-					\ 'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[co]']
-					\ }
+	" 模糊匹配忽略扩展名
+	let g:Lf_WildIgnore = {
+				\ 'dir': ['.svn','.git','.hg'],
+				\ 'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[co]']
+				\ }
 
-		" MRU 文件忽略扩展名
-		let g:Lf_MruFileExclude = ['*.so', '*.exe', '*.py[co]', '*.sw?', '~$*', '*.bak', '*.tmp', '*.dll']
-		let g:Lf_StlColorscheme = 'powerline'
+	" MRU 文件忽略扩展名
+	let g:Lf_MruFileExclude = ['*.so', '*.exe', '*.py[co]', '*.sw?', '~$*', '*.bak', '*.tmp', '*.dll']
+	let g:Lf_StlColorscheme = 'powerline'
 
-		" 禁用 function/buftag 的预览功能，可以手动用 p 预览
-		let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
+	" 禁用 function/buftag 的预览功能，可以手动用 p 预览
+	let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
 
-		" 使用 ESC 键可以直接退出 leaderf 的 normal 模式
-		let g:Lf_NormalMap = {
+	" 使用 ESC 键可以直接退出 leaderf 的 normal 模式
+	let g:Lf_NormalMap = {
 				\ "File":   [["<ESC>", ':exec g:Lf_py "fileExplManager.quit()"<CR>']],
 				\ "Buffer": [["<ESC>", ':exec g:Lf_py "bufExplManager.quit()"<cr>']],
 				\ "Mru": [["<ESC>", ':exec g:Lf_py "mruExplManager.quit()"<cr>']],
@@ -502,49 +436,6 @@ if index(g:bundle_group, 'leaderf') >= 0
 				\ "Function": [["<ESC>", ':exec g:Lf_py "functionExplManager.quit()"<cr>']],
 				\ }
 
-	else
-		" 不支持 python ，使用 CtrlP 代替
-		Plug 'ctrlpvim/ctrlp.vim'
-
-		" 显示函数列表的扩展插件
-		Plug 'tacahiroy/ctrlp-funky'
-
-		" 忽略默认键位
-		let g:ctrlp_map = ''
-
-		" 模糊匹配忽略
-		let g:ctrlp_custom_ignore = {
-		  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
-		  \ 'file': '\v\.(exe|so|dll|mp3|wav|sdf|suo|mht)$',
-		  \ 'link': 'some_bad_symbolic_links',
-		  \ }
-
-		" 项目标志
-		let g:ctrlp_root_markers = ['.project', '.root', '.svn', '.git']
-		let g:ctrlp_working_path = 0
-
-		" CTRL+p 打开文件模糊匹配
-		noremap <c-p> :CtrlP<cr>
-
-		" CTRL+n 打开最近访问过的文件的匹配
-		noremap <c-n> :CtrlPMRUFiles<cr>
-
-		" ALT+p 显示当前文件的函数列表
-		noremap <m-p> :CtrlPFunky<cr>
-
-		" ALT+n 匹配 buffer
-		noremap <m-n> :CtrlPBuffer<cr>
-	endif
-endif
-
-
-"----------------------------------------------------------------------
-" coc.nvim: Vim 使用 LSP 的好帮手，管理各种 LSP
-"----------------------------------------------------------------------
-if index(g:bundle_group, 'coc') >= 0
-	Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
-	let g:coc_global_extensions = ['coc-clangd']
 endif
 
 
