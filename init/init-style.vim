@@ -31,9 +31,8 @@ set list
 " 右下角显示命令
 set showcmd
 
-" 插入模式在状态栏下面显示 -- INSERT --，
-" 先注释掉，默认已经为真了，如果这里再设置一遍会影响 echodoc 插件
-" set showmode
+" 插入模式不在状态栏下面显示 -- INSERT --
+set noshowmode
 
 " 水平切割窗口时，默认在右边显示新窗口
 set splitright
@@ -48,9 +47,6 @@ set background=dark
 
 " 允许 256 色
 set t_Co=256
-
-" 设置颜色主题，会在所有 runtimepaths 的 colors 目录寻找同名配置
-" color desert256
 
 set termguicolors
 
