@@ -15,7 +15,7 @@
 "----------------------------------------------------------------------
 if !exists('g:bundle_group')
 	let g:bundle_group = ['basic', 'enhanced', 'filetypes', 'textobj']
-	let g:bundle_group += ['airline', 'nerdtree', 'ale', 'echodoc']
+	let g:bundle_group += ['airline', 'nerdtree']
 	let g:bundle_group += ['leaderf']
 	let g:bundle_group += ['coc']
 endif
@@ -91,12 +91,7 @@ augroup END
 " 基础插件
 "----------------------------------------------------------------------
 if index(g:bundle_group, 'basic') >= 0
-
-	" 展示开始画面，显示最近编辑过的文件
-	Plug 'mhinz/vim-startify'
-
-	" 一次性安装一大堆 colorscheme
-	Plug 'flazz/vim-colorschemes'
+	" 安装 colorscheme：TokyoNight 主题
 	Plug 'ghifarit53/tokyonight-vim'
 
 	" 支持库，给其他插件用的函数库
@@ -115,18 +110,11 @@ if index(g:bundle_group, 'basic') >= 0
 	" 使用 ALT+e 会在不同窗口/标签上显示 A/B/C 等编号，然后字母直接跳转
 	Plug 't9md/vim-choosewin'
 
-	" 提供基于 TAGS 的定义预览，函数参数预览，quickfix 预览
-	Plug 'skywind3000/vim-preview'
-
 	" Git 支持
 	Plug 'tpope/vim-fugitive'
 
 	" 使用 ALT+E 来选择窗口
 	nmap <m-e> <Plug>(choosewin)
-
-	" 默认不显示 startify
-	let g:startify_disable_at_vimenter = 1
-	let g:startify_session_dir = '~/.vim/session'
 
 	" 使用 <space>ha 清除 errormarker 标注的错误
 	noremap <silent><space>ha :RemoveErrorMarkers<cr>
@@ -166,12 +154,6 @@ if index(g:bundle_group, 'enhanced') >= 0
 	" 使用 :CtrlSF 命令进行模仿 sublime 的 grep
 	Plug 'dyng/ctrlsf.vim'
 
-	" 配对括号和引号自动补全
-	Plug 'Raimondi/delimitMate'
-
-	" 提供 gist 接口
-	Plug 'lambdalisue/vim-gista', { 'on': 'Gista' }
-	
 	" ALT_+/- 用于按分隔符扩大缩小 v 选区
 	map <m-=> <Plug>(expand_region_expand)
 	map <m--> <Plug>(expand_region_shrink)
@@ -290,85 +272,6 @@ endif
 
 
 "----------------------------------------------------------------------
-" ale：动态语法检查
-"----------------------------------------------------------------------
-if index(g:bundle_group, 'ale') >= 0
-	Plug 'w0rp/ale'
-
-	" 设定延迟和提示信息
-	let g:ale_completion_delay = 500
-	let g:ale_echo_delay = 20
-	let g:ale_lint_delay = 500
-	let g:ale_echo_msg_format = '[%linter%] %code: %%s'
-
-	" 设定检测的时机：normal 模式文字改变，或者离开 insert模式
-	" 禁用默认 INSERT 模式下改变文字也触发的设置，太频繁外，还会让补全窗闪烁
-	let g:ale_lint_on_text_changed = 'normal'
-	let g:ale_lint_on_insert_leave = 1
-
-	" 在 linux/mac 下降低语法检查程序的进程优先级（不要卡到前台进程）
-	if has('win32') == 0 && has('win64') == 0 && has('win32unix') == 0
-		let g:ale_command_wrapper = 'nice -n5'
-	endif
-
-	" 允许 airline 集成
-	let g:airline#extensions#ale#enabled = 1
-
-	" 编辑不同文件类型需要的语法检查器
-	let g:ale_linters = {
-				\ 'c': ['cc', 'clangtidy'], 
-				\ 'cpp': ['cc', 'clangtidy'], 
-				\ 'python': ['flake8', 'pylint'], 
-				\ 'lua': ['luac'], 
-				\ 'go': ['go build', 'gofmt'],
-				\ 'java': ['javac'],
-				\ 'javascript': ['eslint'], 
-				\ }
-
-
-	" 获取 pylint, flake8 的配置文件，在 vim-init/tools/conf 下面
-	function s:lintcfg(name)
-		let conf = s:path('tools/conf/')
-		let path1 = conf . a:name
-		let path2 = expand('~/.vim/linter/'. a:name)
-		if filereadable(path2)
-			return path2
-		endif
-		return shellescape(filereadable(path2)? path2 : path1)
-	endfunc
-
-	" 设置 flake8/pylint 的参数
-	let g:ale_python_flake8_options = '--conf='.s:lintcfg('flake8.conf')
-	let g:ale_python_pylint_options = '--rcfile='.s:lintcfg('pylint.conf')
-	let g:ale_python_pylint_options .= ' --disable=W'
-
-	let g:ale_linters.text = ['textlint', 'write-good', 'languagetool']
-
-	" 设置 gcc/clang 的参数
-	let g:ale_c_cc_options = '-Wall -O2 -std=c11'
-	let g:ale_cpp_cc_options = '-Wall -O2 -std=c++17'
-
-	" 设置 clang-tidy 检查的条目
-	let g:ale_cpp_clangtidy_checks = [
-				\ '-*',
-				\ 'clang-analyzer-*',
-				\ 'cppcoreguidelines-*',
-				\ '-cppcoreguidelines-avoid-magic-numbers',
-				\ ]
-endif
-
-
-"----------------------------------------------------------------------
-" echodoc：搭配 YCM/deoplete 在底部显示函数参数
-"----------------------------------------------------------------------
-if index(g:bundle_group, 'echodoc') >= 0
-	Plug 'Shougo/echodoc.vim'
-	set noshowmode
-	let g:echodoc#enable_at_startup = 1
-endif
-
-
-"----------------------------------------------------------------------
 " LeaderF：CtrlP / FZF 的超级代替者，文件模糊匹配，tags/函数名 选择
 "----------------------------------------------------------------------
 if index(g:bundle_group, 'leaderf') >= 0
@@ -435,6 +338,61 @@ if index(g:bundle_group, 'leaderf') >= 0
 				\ "BufTag": [["<ESC>", ':exec g:Lf_py "bufTagExplManager.quit()"<cr>']],
 				\ "Function": [["<ESC>", ':exec g:Lf_py "functionExplManager.quit()"<cr>']],
 				\ }
+
+endif
+
+
+"----------------------------------------------------------------------
+" coc.nvim: Vim 使用 LSP 的客户端，管理各种 LSP
+"----------------------------------------------------------------------
+if index(g:bundle_group, 'coc') >= 0
+	Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+	let g:coc_global_extensions = [
+				\ 'coc-marketplace',
+				\ 'coc-vimlsp',
+				\ 'coc-clangd',
+				\ 'coc-pairs',
+				\ 'coc-json'
+				\ ]
+
+	" 允许 airline 集成
+	let g:airline#extensions#coc#enabled = 1
+
+	" 使用 <Tab> 在已有字符后触发补全，并进行补全选项的导航
+	inoremap <silent><expr> <Tab>
+				\ coc#pum#visible() ? coc#pum#next(1) :
+				\ CheckBackspace() ? "\<Tab>" :
+				\ coc#refresh()
+
+	function! CheckBackspace() abort
+		let col = col('.') - 1 
+		return !col || getline('.')[col - 1]  =~# '\s'
+	endfunction
+
+	" 映射 <S-Tab> 往上翻页
+	inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+	" 映射 [g 和 ]g 进行诊断导航
+	nmap <silent> [g <Plug>(coc-diagnostic-prev)
+	nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+	" 代码跳转导航
+	nmap <silent> gd <Plug>(coc-definition)
+	nmap <silent> gy <Plug>(coc-type-definition)
+	nmap <silent> gi <Plug>(coc-implementation)
+	nmap <silent> gr <Plug>(coc-references)
+
+	" 映射 K 在预览窗口显示文档
+	nnoremap <silent> K :call ShowDocumentation()<CR>
+
+	function! ShowDocumentation()
+		if CocAction('hasProvider', 'hover')
+			call CocActionAsync('doHover')
+		else
+			call feedkeys('K', 'in')
+		endif
+	endfunction
 
 endif
 
