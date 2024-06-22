@@ -154,9 +154,6 @@ if index(g:bundle_group, 'enhanced') >= 0
 	" 使用 :CtrlSF 命令进行模仿 sublime 的 grep
 	Plug 'dyng/ctrlsf.vim'
 
-	" 配对括号和引号自动补全
-	Plug 'Raimondi/delimitMate'
-
 	" ALT_+/- 用于按分隔符扩大缩小 v 选区
 	map <m-=> <Plug>(expand_region_expand)
 	map <m--> <Plug>(expand_region_shrink)
@@ -341,6 +338,61 @@ if index(g:bundle_group, 'leaderf') >= 0
 				\ "BufTag": [["<ESC>", ':exec g:Lf_py "bufTagExplManager.quit()"<cr>']],
 				\ "Function": [["<ESC>", ':exec g:Lf_py "functionExplManager.quit()"<cr>']],
 				\ }
+
+endif
+
+
+"----------------------------------------------------------------------
+" coc.nvim: Vim 使用 LSP 的客户端，管理各种 LSP
+"----------------------------------------------------------------------
+if index(g:bundle_group, 'coc') >= 0
+	Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+	let g:coc_global_extensions = [
+				\ 'coc-marketplace',
+				\ 'coc-vimlsp',
+				\ 'coc-clangd',
+				\ 'coc-pairs',
+				\ 'coc-json'
+				\ ]
+
+	" 允许 airline 集成
+	let g:airline#extensions#coc#enabled = 1
+
+	" 使用 <Tab> 在已有字符后触发补全，并进行补全选项的导航
+	inoremap <silent><expr> <Tab>
+				\ coc#pum#visible() ? coc#pum#next(1) :
+				\ CheckBackspace() ? "\<Tab>" :
+				\ coc#refresh()
+
+	function! CheckBackspace() abort
+		let col = col('.') - 1 
+		return !col || getline('.')[col - 1]  =~# '\s'
+	endfunction
+
+	" 映射 <S-Tab> 往上翻页
+	inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+	" 映射 [g 和 ]g 进行诊断导航
+	nmap <silent> [g <Plug>(coc-diagnostic-prev)
+	nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+	" 代码跳转导航
+	nmap <silent> gd <Plug>(coc-definition)
+	nmap <silent> gy <Plug>(coc-type-definition)
+	nmap <silent> gi <Plug>(coc-implementation)
+	nmap <silent> gr <Plug>(coc-references)
+
+	" 映射 K 在预览窗口显示文档
+	nnoremap <silent> K :call ShowDocumentation()<CR>
+
+	function! ShowDocumentation()
+		if CocAction('hasProvider', 'hover')
+			call CocActionAsync('doHover')
+		else
+			call feedkeys('K', 'in')
+		endif
+	endfunction
 
 endif
 

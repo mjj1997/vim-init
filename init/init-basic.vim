@@ -38,9 +38,17 @@ set ttimeout
 " 功能键超时检测 50 毫秒
 set ttimeoutlen=50
 
+" 设置更短的 updatetime，提升速度
+set updatetime=300
+
 " 显示光标位置
 set ruler
 
+" 不保存也能切换 buffer
+set hidden
+
+" 不在底部显示模式 
+set noshowmode
 
 "----------------------------------------------------------------------
 " 搜索设置
