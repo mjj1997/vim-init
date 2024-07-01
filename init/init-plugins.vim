@@ -142,17 +142,8 @@ if index(g:bundle_group, 'enhanced') >= 0
 	" 用 v 选中一个区域后，ALT_+/- 按分隔符扩大/缩小选区
 	Plug 'terryma/vim-expand-region'
 
-	" 快速文件搜索
-	Plug 'junegunn/fzf'
-
-	" 给不同语言提供字典补全，插入模式下 c-x c-k 触发
-	Plug 'asins/vim-dict'
-
 	" 使用 :FlyGrep 命令进行实时 grep
 	Plug 'wsdjeg/FlyGrep.vim'
-
-	" 使用 :CtrlSF 命令进行模仿 sublime 的 grep
-	Plug 'dyng/ctrlsf.vim'
 
 	" ALT_+/- 用于按分隔符扩大缩小 v 选区
 	map <m-=> <Plug>(expand_region_expand)
@@ -193,12 +184,6 @@ endif
 "----------------------------------------------------------------------
 if index(g:bundle_group, 'filetypes') >= 0
 
-	" powershell 脚本文件的语法高亮
-	Plug 'pprovost/vim-ps1', { 'for': 'ps1' }
-
-	" lua 语法高亮增强
-	Plug 'tbastos/vim-lua', { 'for': 'lua' }
-
 	" C++ 语法高亮增强，支持 11/14/17 标准
 	Plug 'octol/vim-cpp-enhanced-highlight', { 'for': ['c', 'cpp'] }
 
@@ -207,12 +192,6 @@ if index(g:bundle_group, 'filetypes') >= 0
 
 	" python 语法文件增强
 	Plug 'vim-python/python-syntax', { 'for': ['python'] }
-
-	" rust 语法增强
-	Plug 'rust-lang/rust.vim', { 'for': 'rust' }
-
-	" vim org-mode 
-	Plug 'jceb/vim-orgmode', { 'for': 'org' }
 endif
 
 
@@ -251,23 +230,6 @@ if index(g:bundle_group, 'nerdtree') >= 0
 	noremap <space>no :NERDTreeFocus<cr>
 	noremap <space>nm :NERDTreeMirror<cr>
 	noremap <space>nt :NERDTreeToggle<cr>
-endif
-
-
-"----------------------------------------------------------------------
-" LanguageTool 语法检查
-"----------------------------------------------------------------------
-if index(g:bundle_group, 'grammer') >= 0
-	Plug 'rhysd/vim-grammarous'
-	noremap <space>rg :GrammarousCheck --lang=en-US --no-move-to-first-error --no-preview<cr>
-	map <space>rr <Plug>(grammarous-open-info-window)
-	map <space>rv <Plug>(grammarous-move-to-info-window)
-	map <space>rs <Plug>(grammarous-reset)
-	map <space>rx <Plug>(grammarous-close-info-window)
-	map <space>rm <Plug>(grammarous-remove-error)
-	map <space>rd <Plug>(grammarous-disable-rule)
-	map <space>rn <Plug>(grammarous-move-to-next-error)
-	map <space>rp <Plug>(grammarous-move-to-previous-error)
 endif
 
 
@@ -371,7 +333,12 @@ if index(g:bundle_group, 'coc') >= 0
 	endfunction
 
 	" 映射 <S-Tab> 往上翻页
-	inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+	inoremap <expr><S-Tab> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+	inoremap <silent><expr> <cr> coc#pum#visible() ? coc#_select_confirm()
+				\ : "\<C-g>u\<CR>\<c-r>\=coc#on_enter()\<CR>"
+
+	inoremap <silent><expr> <c-space> coc#refresh()
 
 	" 映射 [g 和 ]g 进行诊断导航
 	nmap <silent> [g <Plug>(coc-diagnostic-prev)
